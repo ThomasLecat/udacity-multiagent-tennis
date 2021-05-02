@@ -17,7 +17,7 @@ def evaluate(environment_path: str, checkpoint_path: str, show_graphics: bool) -
     env = MultiAgentEnvWrapper(env, preprocessor, skip_frames=DDPGConfig.SKIP_FRAMES)
     agent = DDPG(env=env, config=DDPGConfig, replay_buffer=None)
     # Load saved model
-    agent.actor = torch.load(checkpoint_path)
+    agent.actor.load_state_dict(torch.load(checkpoint_path))
 
     # Play episode
     episode_reward: float = 0.0
