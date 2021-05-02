@@ -46,9 +46,9 @@
 
     A "critic" network parameterized by $\theta^Q$ seek to approximate the optimal $Q$ value $Q^*$, defined as:
     \[
-        Q^*(s, a, a_{other}) = \max_{\pi} \mathbb{E}_{\pi} (\sum_{t} \gamma^t r_t | S=s, A^{a_0}=a, A^{a_1}=a_{other}),  \forall (a, a_{other}, s) \in A^2 \times S
+        Q^*(s, a, a_{other}) = \max_{\pi} \mathbb{E}_{\pi} (\sum_{t} \gamma^t r_t | S=s, A^{a_0}_0=a, A^{a_1}_0=a_{other}),  \forall (a, a_{other}, s) \in A^2 \times S
     \]
-    where $A^{a_0}$ and $A^{a_1}$ represent the actions of the first and second agents respectively.
+    where $A^{a_0}_t$ and $A^{a_1}_t$ represent the actions of the first and second agents respectively at step $t$.
     The network takes the current observation and action of the agent as well as the action of the other agent as input. It outputs a single value.\\
 
     A deterministic "actor" network parameterized by $\theta^\mu$ that approximates the function $\argmax_a{Q(\cdot|s)}$.
