@@ -4,18 +4,20 @@ import time
 import torch
 from unityagents import UnityEnvironment
 
-from ccontrol.agent import DDPG
-from ccontrol.config import DDPGConfig
-from ccontrol.environment import MultiAgentEnvWrapper
-from ccontrol.preprocessors import IdentityPreprocessor, PreprocessorInterface
+from multiagent.agent import DDPG
+from multiagent.config import DDPGConfig
+from multiagent.environment import MultiAgentEnvWrapper
+from multiagent.preprocessors import IdentityPreprocessor, PreprocessorInterface
 
 
-def evaluate(environment_path: str, checkpoint_path: str, show_graphics: bool) -> None:
+def evaluate(
+    environment_path: str, checkpoint_path: str, show_graphics: bool, seed: int
+) -> None:
     """Play one episode with the specified actor checkpoint of the trained DDPG agent."""
     preprocessor: PreprocessorInterface = IdentityPreprocessor()
     env = UnityEnvironment(environment_path, no_graphics=not show_graphics)
     env = MultiAgentEnvWrapper(env, preprocessor, skip_frames=DDPGConfig.SKIP_FRAMES)
-    agent = DDPG(env=env, config=DDPGConfig, replay_buffer=None)
+    agent = DDPG(env=env, config=DDPGConfig, random_seed=seed)
     # Load saved model
     agent.actor.load_state_dict(torch.load(checkpoint_path))
 
@@ -51,10 +53,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--show_graphics",
-        "-s",
+        "-g",
         type=bool,
         default=True,
         help="Visualize the agent playing on the environment",
     )
+    parser.add_argument(
+        "--seed",
+        "-s",
+        type=int,
+        default=0,
+        help="Random seed for initialization of NN and random processes",
+    )
     args = parser.parse_args()
-    evaluate(args.environment_path, args.checkpoint_path, args.show_graphics)
+    evaluate(args.environment_path, args.checkpoint_path, args.show_graphics, args.seed)
