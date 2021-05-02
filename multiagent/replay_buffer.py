@@ -8,7 +8,7 @@ import torch
 class ReplayBuffer:
     """Fixed-size buffer to store experience tuples."""
 
-    def __init__(self, action_size, buffer_size, batch_size, device):
+    def __init__(self, action_size, buffer_size, batch_size, seed, device):
         """Initialize a ReplayBuffer object.
         Params
         ======
@@ -30,6 +30,7 @@ class ReplayBuffer:
                 "agent_idx",
             ],
         )
+        random.seed(seed)
         self.device = device
 
     def add(self, obs, action, other_action, reward, next_obs, done, agent_idx):
