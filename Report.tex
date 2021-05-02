@@ -46,8 +46,9 @@
 
     A "critic" network parameterized by $\theta^Q$ seek to approximate the optimal $Q$ value $Q^*$, defined as:
     \[
-        Q^*(s, a, a_{other}) = \max_{\pi} \mathbb{E}_{\pi} (\sum_{t} \gamma^t r_t | S_0=s, A^0_0=a, A^1_0=a_{other}),  \forall (a, a_{other} s) \in A^2 \times S
+        Q^*(s, a, a_{other}) = \max_{\pi} \mathbb{E}_{\pi} (\sum_{t} \gamma^t r_t | S=s, A^{a_0}=a, A^{a_1}=a_{other}),  \forall (a, a_{other}, s) \in A^2 \times S
     \]
+    where $A^{a_0}$ and $A^{a_1}$ represent the actions of the first and second agents respectively.
     The network takes the current observation and action of the agent as well as the action of the other agent as input. It outputs a single value.\\
 
     A deterministic "actor" network parameterized by $\theta^\mu$ that approximates the function $\argmax_a{Q(\cdot|s)}$.
@@ -59,16 +60,16 @@
         \mathcal{L}_{critic}(\theta^Q) = \mathbb{E}_{s, a, a_{other}, r, s'} \big[((r + \gamma Q(s', \mu'(s'| \theta^{\mu'}), a_{other}| \theta^{Q'}) - Q(s, a, a_{other}| \theta^Q))^2\big]
     \]
     where $\theta^{Q'}$ and $\theta^{\mu'}$ are the parameters of target networks which are slowly updated towards their respective local networks at every training step.
-    The target networks makes the TD target $r + \gamma Q(s', \mu'(s'| \theta^{\mu'})| \theta^{Q'})$ independent from the parameters $\theta^Q$,
+    The target networks makes the TD target $r + \gamma Q(s', \mu'(s'| \theta^{\mu'}), a_{other}| \theta^{Q'})$ independent from the parameters $\theta^Q$,
     which stabilizes the training.\\
 
     The loss function of the actor strives to maximise the $Q$ value:
     \[
-        \mathcal{L}_{actor}(\theta^{\mu}) = - \mathbb{E}_{s} Q(s, \mu(s | \theta^\mu) | \theta^Q)
+        \mathcal{L}_{actor}(\theta^{\mu}) = - \mathbb{E}_{s, a_{other}} Q(s, \mu(s | \theta^\mu), a_{other} | \theta^Q)
     \]\\
 
     The losses are minimized by Adam optimizers, a variant of the Stochastic Gradient Descent algorithm.
-    At each step, the gradient is approximated from a minibatch of experiences ${(s, a, r, s', d)_i}$.
+    At each step, the gradient is approximated from a minibatch of experiences ${(s, a, a_{other}, r, s', d)_i}$.
     To avoid a strong correlation between the steps of the minibatch, transitions are stored in a large replay buffer
     during rollouts and then sampled uniformly.
 
