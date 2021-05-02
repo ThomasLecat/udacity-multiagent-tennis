@@ -119,7 +119,7 @@ class DDPG:
             if np.mean(scores_window) >= 0.5:
                 print(
                     "\nEnvironment solved in {:d} episodes,\tAverage Score: {:.3f}".format(
-                        episode_idx - 100, np.mean(scores_window)
+                        episode_idx, np.mean(scores_window)
                     )
                 )
                 break
