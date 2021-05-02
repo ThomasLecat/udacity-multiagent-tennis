@@ -46,7 +46,7 @@ if __name__ == "__main__":
         "--seed",
         "-s",
         type=int,
-        default=None,
+        default=0,
         help="Random seed for initialization of NN and random processes",
     )
     args = parser.parse_args()
