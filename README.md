@@ -1,7 +1,7 @@
 # Udacity Multiagent Tennis
 
 This repository implements a multi-agent version of [DDPG](https://arxiv.org/abs/1509.02971) 
-agent that solves the two player Unity environment _Tennis_. 
+that solves the two player Unity environment _Tennis_. 
 
 Our implementation follows the centralized training and decentralized execution 
 paradigm. We share the weights of the actor and critic models between agents and 

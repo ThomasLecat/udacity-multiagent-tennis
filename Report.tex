@@ -51,7 +51,8 @@
     The network takes the current observation and action of the agent as well as the action of the other agent as input. It outputs a single value.\\
 
     A deterministic "actor" network parameterized by $\theta^\mu$ that approximates the function $\argmax_a{Q(\cdot|s)}$.
-    It takes the current observation as input.\\
+    It takes the current observation as input.
+    The weights of the actor are shared between agents.\\
 
     The loss function of the critic is defined as the mean squared TD error of the Bellman optimality equation:
     \[
@@ -74,12 +75,11 @@
 
     \section{Hyperparemeters}\label{sec:hyperparemeters}
 
-    The actor network is composed of 3 fully connected layers, with respectively 128, 128 and 64 neurons each,
-    with a batch normalisation layer between the first two fully connected.
-    The actor optimizer is Adam with a learning rate of $10^{-4}$.
+    The actor network is composed of 2 fully connected layers, with respectively 256 and 128 neurons.
+    The 3 last local observations of the agent are stacked and form the input of the network.
+    The actor optimizer is Adam with a learning rate of $10^{-3}$.
 
-    The critic network is composed of 3 fully connected layers, with respectively 128, 128 and 64 neurons each,
-    with a batch normalisation layer between the first two fully connected.
+    The critic network is composed of 2 fully connected layers, with respectively 256 and 128 neurons.
     The output of the first layer and the action are concatenated before flowing into the second layer.
     The critic optimizer is Adam with a learning rate of $10^{-3}$.\\
 
