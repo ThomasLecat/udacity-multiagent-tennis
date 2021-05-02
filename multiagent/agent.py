@@ -33,20 +33,26 @@ class DDPG:
             config (ClassVar[DDPGConfig]): hyperparameters
             random_seed (int): random seed
         """
+        # Set random seed
+        if random_seed is not None:
+            random.seed(random_seed)
+            torch.manual_seed(random_seed)
+            np.random.seed(random_seed)
+
         self.env: MultiAgentEnvWrapper = env
         self.config: ClassVar[DDPGConfig] = config
 
         # Actor(s)
-        self.actor = Actor(env.obs_size, env.num_actions, random_seed).to(device)
-        self.actor_target = Actor(env.obs_size, env.num_actions, random_seed).to(device)
+        self.actor = Actor(env.obs_size, env.num_actions).to(device)
+        self.actor_target = Actor(env.obs_size, env.num_actions).to(device)
+        self.actor_target.load_state_dict(self.actor.state_dict())
 
         # Critic(s)
-        self.critic = Critic(
-            env.obs_size, env.num_actions, env.num_agents, random_seed
-        ).to(device)
-        self.critic_target = Critic(
-            env.obs_size, env.num_actions, env.num_agents, random_seed
-        ).to(device)
+        self.critic = Critic(env.obs_size, env.num_actions, env.num_agents).to(device)
+        self.critic_target = Critic(env.obs_size, env.num_actions, env.num_agents).to(
+            device
+        )
+        self.critic_target.load_state_dict(self.critic.state_dict())
 
         # Optimizers
         self.actor_optimizer = optim.Adam(
@@ -59,7 +65,6 @@ class DDPG:
         )
 
         # Noise process
-        random.seed(random_seed)
         self.noise = OrnsteinUhlenbeckNoise(
             (env.num_agents, env.num_actions), config.MU, config.THETA, config.SIGMA
         )
@@ -68,11 +73,7 @@ class DDPG:
 
         # Replay memory
         self.replay_buffer = ReplayBuffer(
-            env.num_actions,
-            self.config.BUFFER_SIZE,
-            self.config.BATCH_SIZE,
-            random_seed,
-            device,
+            env.num_actions, self.config.BUFFER_SIZE, self.config.BATCH_SIZE, device
         )
 
     def compute_actions(self, observations, add_noise):
